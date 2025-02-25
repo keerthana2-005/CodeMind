@@ -1,10 +1,8 @@
+import os
 from flask import Flask, request, jsonify
 from core.ast_analyzer import analyze_ast
-from core.code_executor import execute_code
 from core.gemini_analyzer import analyze_with_gemini
-from core.error_handler import handle_error
 import traceback
-import os
 
 app = Flask(__name__)
 
@@ -16,9 +14,8 @@ def analyze_code():
             return jsonify({'error': 'Missing code in request'}), 400
 
         code = data['code']
-        execute_code(code)
-        ast_json = analyze_ast(code)
-        gemini_response = analyze_with_gemini(ast_json)
+        ast_json = analyze_ast(code)  # Convert code to AST and then JSON
+        gemini_response = analyze_with_gemini(ast_json)  # Send AST JSON to Gemini
 
         return jsonify({'result': gemini_response})
 
@@ -41,9 +38,8 @@ def analyze_file():
         with open(filepath, 'r') as file:
             code = file.read()
 
-        execute_code(code)
-        ast_json = analyze_ast(code)
-        gemini_response = analyze_with_gemini(ast_json)
+        ast_json = analyze_ast(code)  # Convert code to AST and then JSON
+        gemini_response = analyze_with_gemini(ast_json)  # Send AST JSON to Gemini
 
         return jsonify({'result': gemini_response})
 
@@ -52,4 +48,4 @@ def analyze_file():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001) #changed to port 5001
+    app.run(debug=True, port=5001)
